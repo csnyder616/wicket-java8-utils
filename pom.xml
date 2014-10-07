@@ -11,5 +11,13 @@
   </modules>
   <properties>
   	<java.source.level>1.8</java.source.level>
+  	<wicket.version>6.17.0</wicket.version>
   </properties>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.apache.wicket</groupId>
+  		<artifactId>wicket-core</artifactId>
+  		<version>${wicket.version}</version>
+  	</dependency>
+  </dependencies>
 </project>
