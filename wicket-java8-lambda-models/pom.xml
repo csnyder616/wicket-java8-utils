@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>wicket-java8-lambda-models</artifactId>
 	<name>wicket-java8-lambda-models</name>
-	<description>Models for Wicket which utilize lambda functions to set/retrieve data</description>
+	<description>Models for Wicket which utilize lambda functions to retrieve data</description>
 	<build>
 		<plugins>
 			<plugin>
