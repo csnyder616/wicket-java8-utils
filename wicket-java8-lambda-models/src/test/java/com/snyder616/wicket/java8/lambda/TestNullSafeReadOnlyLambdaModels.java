@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.wicket.model.IModel;
@@ -47,10 +48,12 @@ public class TestNullSafeReadOnlyLambdaModels {
 		List<String> childList = new ArrayList<String>();
 		MockParent parent = new MockParent(childList);
 		IModel<MockParent> parentModel = Model.of(parent);
-		IModel<List<? extends Serializable>> childModel = NullSafeReadOnlyLambdaModels.createListModel(parentModel, p -> p.getChildList());
+		IModel<Collection<? extends Serializable>> childModel = NullSafeReadOnlyLambdaModels.createCollectionModel(
+			parentModel,
+			p -> p.getChildList());
 		assertSame(childList, childModel.getObject());
 	}
-
+	
 	/**
 	 * Test {@link NullSafeReadOnlyLambdaModels#createCollectionModel(IModel, java.util.function.Function)} with a null parent
 	 * 
@@ -59,7 +62,36 @@ public class TestNullSafeReadOnlyLambdaModels {
 	@Test
 	public void testCreateCollectionModelWithNullParent() {
 		IModel<MockParent> parentModel = Model.of();
+		IModel<Collection<? extends Serializable>> childModel = NullSafeReadOnlyLambdaModels.createCollectionModel(
+			parentModel,
+			p -> p.getChildList());
+		assertEquals(0, childModel.getObject().size());
+	}
+	
+	/**
+	 * Test {@link NullSafeReadOnlyLambdaModels#createListModel(IModel, java.util.function.Function)} with a non-null parent
+	 * 
+	 * Expected outcome: the getObject() method of the model returns the parent's child list
+	 */
+	@Test
+	public void testCreateListModel() {
+		List<String> childList = new ArrayList<String>();
+		MockParent parent = new MockParent(childList);
+		IModel<MockParent> parentModel = Model.of(parent);
+		IModel<List<? extends Serializable>> childModel = NullSafeReadOnlyLambdaModels.createListModel(parentModel, p -> p.getChildList());
+		assertSame(childList, childModel.getObject());
+	}
+	
+	/**
+	 * Test {@link NullSafeReadOnlyLambdaModels#createListModel(IModel, java.util.function.Function)} with a null parent
+	 * 
+	 * Expected outcome: the getObject() method of the model returns an empty list
+	 */
+	@Test
+	public void testCreateListModelWithNullParent() {
+		IModel<MockParent> parentModel = Model.of();
 		IModel<List<? extends Serializable>> childModel = NullSafeReadOnlyLambdaModels.createListModel(parentModel, p -> p.getChildList());
 		assertEquals(0, childModel.getObject().size());
 	}
+	
 }
