@@ -12,11 +12,22 @@ public class TestNullSafeReadOnlyLambdaModels {
 	 * Expected outcome: The getObject() method of the model returns the child object
 	 */
 	@Test
-	public void testCreateModelWithParent() {
+	public void testCreateModel() {
 		Object child = new String("This is the child.");
 		MockParent parent = new MockParent(child);
 		IModel<MockParent> parentModel = Model.of(parent);
 		IModel<Object> childModel = NullSafeReadOnlyLambdaModels.createModel(parentModel, p -> p.getChildObject());
 		assertEquals(child, childModel.getObject());
+	}
+	
+	/**
+	 * Preconditions: Parent is null
+	 * Expected outcome: The getObject() method of the model returns null
+	 */
+	@Test
+	public void testCreateModelWithNullParent() {
+		IModel<MockParent> parentModel = Model.of();
+		IModel<Object> childModel = NullSafeReadOnlyLambdaModels.createModel(parentModel, p -> p.getChildObject());
+		assertNull(childModel.getObject());
 	}
 }
