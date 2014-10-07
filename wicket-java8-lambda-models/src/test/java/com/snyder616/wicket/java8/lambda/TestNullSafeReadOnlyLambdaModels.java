@@ -94,4 +94,29 @@ public class TestNullSafeReadOnlyLambdaModels {
 		assertEquals(0, childModel.getObject().size());
 	}
 	
+	/**
+	 * Test {@link NullSafeReadOnlyLambdaModels#createBooleanModel(IModel, java.util.function.Function)} with a non-null parent
+	 * 
+	 * Expected outcome: the getObject() method of the model returns the parent's child boolean
+	 */
+	@Test
+	public void testCreateBooleanModel() {
+		Boolean childBoolean = Boolean.TRUE;
+		MockParent parent = new MockParent(childBoolean);
+		IModel<MockParent> parentModel = Model.of(parent);
+		IModel<Boolean> childModel = NullSafeReadOnlyLambdaModels.createBooleanModel(parentModel, p -> p.getChildBoolean());
+		assertSame(childBoolean, childModel.getObject());
+	}
+	
+	/**
+	 * Test {@link NullSafeReadOnlyLambdaModels#createBooleanModel(IModel, java.util.function.Function)} with a null parent
+	 * 
+	 * Expected outcome: the getObject() method of the model returns Boolean.FALSE
+	 */
+	@Test
+	public void testCreateBooleanModelWithNullParent() {
+		IModel<MockParent> parentModel = Model.of();
+		IModel<Boolean> childModel = NullSafeReadOnlyLambdaModels.createBooleanModel(parentModel, p -> p.getChildBoolean());
+		assertEquals(Boolean.FALSE, childModel.getObject());
+	}
 }

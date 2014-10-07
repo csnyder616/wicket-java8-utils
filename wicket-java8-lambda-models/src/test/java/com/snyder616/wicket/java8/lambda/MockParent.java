@@ -7,6 +7,7 @@ class MockParent implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Object childObject;
 	private List<? extends Serializable> childList;
+	private Boolean childBoolean;
 	
 	MockParent(Object childObject) {
 		this.childObject = childObject;
@@ -16,11 +17,19 @@ class MockParent implements Serializable {
 		this.childList = childList;
 	}
 	
+	MockParent(Boolean childBoolean) {
+		this.childBoolean = childBoolean;
+	}
+	
 	Object getChildObject() {
 		return childObject;
 	}
 	
 	List<? extends Serializable> getChildList() {
 		return childList;
+	}
+	
+	Boolean getChildBoolean() {
+		return childBoolean;
 	}
 }
