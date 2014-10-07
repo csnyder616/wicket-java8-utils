@@ -6,4 +6,10 @@
   <packaging>pom</packaging>
   <name>wicket-java8-utils</name>
   <description>Utility classes to make Wicket coding more pleasant with the support of features from Java 8</description>
+  <modules>
+  	<module>wicket-java8-lambda-models</module>
+  </modules>
+  <properties>
+  	<java.source.level>1.8</java.source.level>
+  </properties>
 </project>
