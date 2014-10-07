@@ -1,19 +1,20 @@
 package com.snyder616.wicket.java8.lambda;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
- 
+
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
- 
+
 /**
  * Provides utility methods to construct read-only null-safe models that consist of a parent model and a function to retrieve a
  * child of that model. If the object returned by the parent model is null, the model will return an empty value rather than
- * calling the function. The specific empty value returned varies depending on which type of wrapped model is used - each factory
- * method documents what "empty" means for its specific case.
+ * calling the function. The specific empty value returned varies depending on which type of model is used - each factory method
+ * documents what "empty" means for its specific case.
  */
-public class ReadOnlyLambdaModels {
+public final class NullSafeReadOnlyLambdaModels {
 	/**
 	 * Constructs a null-safe model to retrieve child data from the parent. If the parent object is null, this model will return
 	 * null.
@@ -26,10 +27,10 @@ public class ReadOnlyLambdaModels {
 	 *            Model to access parent object
 	 * @param childGetter
 	 *            Function that returns the child data from the specified parent. May safely assume that parent is not null.
-	 * @return Read-only wrapped model providing access to the child data.
+	 * @return Read-only model providing access to the child data.
 	 */
-	public static <P, C> IModel<C> of(IModel<P> parentModel, Function<P, C> childGetter) {
-		return new WrappedModel<P, C>(parentModel, childGetter);
+	public static <P, C> IModel<C> createModel(IModel<P> parentModel, Function<P, C> childGetter) {
+		return new NullSafeReadOnlyModel<P, C>(parentModel, childGetter);
 	}
 	
 	/**
@@ -44,10 +45,11 @@ public class ReadOnlyLambdaModels {
 	 *            Model to access parent object
 	 * @param childGetter
 	 *            Function that returns the child collection from the specified parent. May safely assume that parent is not null.
-	 * @return Read-only wrapped model providing access to the child collections.
+	 * @return Read-only model providing access to the child collections.
 	 */
-	public static <P, C> IModel<Collection<? extends C>> ofCollection(IModel<P> parent, Function<P, Collection<? extends C>> childGetter) {
-		return new WrappedCollectionModel<P, C>(parent, childGetter);
+	public static <P, C> IModel<Collection<? extends C>> createCollectionModel(IModel<P> parentModel,
+		Function<P, Collection<? extends C>> childGetter) {
+		return new CollectionModel<P, C>(parentModel, childGetter);
 	}
 	
 	/**
@@ -62,18 +64,18 @@ public class ReadOnlyLambdaModels {
 	 *            Model to access parent object
 	 * @param childGetter
 	 *            Function that returns the child lists from the specified parent. May safely assume that parent is not null.
-	 * @return Read-only wrapped model providing access to the child lists.
+	 * @return Read-only model providing access to the child lists.
 	 */
-	public static <P, C> IModel<List<? extends C>> ofList(IModel<P> parent, Function<P, List<? extends C>> childGetter) {
-		return new WrappedListModel<P, C>(parent, childGetter);
+	public static <P, C> IModel<List<? extends C>> createListModel(IModel<P> parentModel, Function<P, List<? extends C>> childGetter) {
+		return new ListModel<P, C>(parentModel, childGetter);
 	}
 	
 	/**
 	 * Constructs a null-safe model to retrieve child Boolean data from the parent. If the parent object is null, this model will
 	 * return Boolean.FALSE.
 	 * 
-	 * Caveat: Since the absence of data results in data (FALSE) being returned, this method is only applicable to limited
-	 * use-cases. In many cases, {@link WrappedModels#of(IModel, Function)} is the more appropriate model to use.
+	 * Caveat: In the absence of data actually leads to data (FALSE) being returned. Therefore, this method is only applicable to
+	 * limited use-cases. In many cases, {@link ReadOnlyLambdaModels#of(IModel, Function)} is the more appropriate model to use.
 	 * 
 	 * @param <P>
 	 *            Parent type
@@ -81,10 +83,10 @@ public class ReadOnlyLambdaModels {
 	 *            Model to access parent object
 	 * @param childGetter
 	 *            Function that returns the child Boolean from the specified parent. May safely assume that parent is not null.
-	 * @return Read-only wrapped model providing access to the child Boolean.
+	 * @return Read-only model providing access to the child Boolean.
 	 */
-	public static <P> IModel<Boolean> ofBoolean(IModel<P> parent, Function<P, Boolean> childGetter) {
-		return new WrappedBooleanModel<P>(parent, childGetter);
+	public static <P> IModel<Boolean> createBooleanModel(IModel<P> parentModel, Function<P, Boolean> childGetter) {
+		return new BooleanModel<P>(parentModel, childGetter);
 	}
 	
 	/**
@@ -93,12 +95,12 @@ public class ReadOnlyLambdaModels {
 	 * @param <C>
 	 *            Child data type
 	 */
-	private static class WrappedModel<P, C> extends AbstractReadOnlyModel<C> {
+	private static class NullSafeReadOnlyModel<P, C> extends AbstractReadOnlyModel<C> {
 		private static final long serialVersionUID = 1L;
 		private final IModel<P> parent;
 		private final Function<P, C> childGetter;
 		
-		private WrappedModel(IModel<P> parent, Function<P, C> childGetter) {
+		private NullSafeReadOnlyModel(IModel<P> parent, Function<P, C> childGetter) {
 			this.parent = parent;
 			this.childGetter = childGetter;
 		}
@@ -123,10 +125,10 @@ public class ReadOnlyLambdaModels {
 		}
 	}
 	
-	private static class WrappedListModel<P, C> extends WrappedModel<P, List<? extends C>> {
+	private static class ListModel<P, C> extends NullSafeReadOnlyModel<P, List<? extends C>> {
 		private static final long serialVersionUID = 1L;
 		
-		private WrappedListModel(IModel<P> parent, Function<P, List<? extends C>> childGetter) {
+		private ListModel(IModel<P> parent, Function<P, List<? extends C>> childGetter) {
 			super(parent, childGetter);
 		}
 		
@@ -136,10 +138,10 @@ public class ReadOnlyLambdaModels {
 		}
 	}
 	
-	private static class WrappedCollectionModel<P, C> extends WrappedModel<P, Collection<? extends C>> {
+	private static class CollectionModel<P, C> extends NullSafeReadOnlyModel<P, Collection<? extends C>> {
 		private static final long serialVersionUID = 1L;
 		
-		private WrappedCollectionModel(IModel<P> parent, Function<P, Collection<? extends C>> childGetter) {
+		private CollectionModel(IModel<P> parent, Function<P, Collection<? extends C>> childGetter) {
 			super(parent, childGetter);
 		}
 		
@@ -149,10 +151,10 @@ public class ReadOnlyLambdaModels {
 		}
 	}
 	
-	private static class WrappedBooleanModel<P> extends WrappedModel<P, Boolean> {
+	private static class BooleanModel<P> extends NullSafeReadOnlyModel<P, Boolean> {
 		private static final long serialVersionUID = 1L;
 		
-		private WrappedBooleanModel(IModel<P> parent, Function<P, Boolean> childGetter) {
+		private BooleanModel(IModel<P> parent, Function<P, Boolean> childGetter) {
 			super(parent, childGetter);
 		}
 		
