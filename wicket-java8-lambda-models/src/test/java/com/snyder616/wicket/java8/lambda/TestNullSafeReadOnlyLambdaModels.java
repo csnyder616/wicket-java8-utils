@@ -8,8 +8,9 @@ import org.junit.Test;
 
 public class TestNullSafeReadOnlyLambdaModels {
 	/**
-	 * Preconditions: Parent is non-null
-	 * Expected outcome: The getObject() method of the model returns the child object
+	 * Test {@link NullSafeReadOnlyLambdaModels#createModel(IModel, java.util.function.Function)} with a non-null parent
+	 * 
+	 * Expected outcome: The getObject() method of the model returns the parent's child object
 	 */
 	@Test
 	public void testCreateModel() {
@@ -21,7 +22,8 @@ public class TestNullSafeReadOnlyLambdaModels {
 	}
 	
 	/**
-	 * Preconditions: Parent is null
+	 * Test {@link NullSafeReadOnlyLambdaModels#createModel(IModel, java.util.function.Function)} with a null parent
+	 * 
 	 * Expected outcome: The getObject() method of the model returns null
 	 */
 	@Test
@@ -30,4 +32,6 @@ public class TestNullSafeReadOnlyLambdaModels {
 		IModel<Object> childModel = NullSafeReadOnlyLambdaModels.createModel(parentModel, p -> p.getChildObject());
 		assertNull(childModel.getObject());
 	}
+	
+	
 }
